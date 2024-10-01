@@ -97,11 +97,12 @@
           <h2 class="text-3xl monster-header mb-6">Ajouter un Monstre</h2>
           <form class="grid grid-cols-1 gap-4">
             <div>
-              <label class="block mb-2">Nom du Monstre</label>
+              <label class="block mb-2"  >Nom du Monstre</label>
               <input
                 type="text"
                 class="w-full p-2 bg-gray-800 text-white rounded"
                 placeholder="Nom du monstre"
+                v-model="newMonster.name"
               />
             </div>
 
@@ -113,6 +114,7 @@
                   type="number"
                   class="w-full p-2 bg-gray-800 text-white rounded"
                   placeholder="PV"
+                  v-model="newMonster.pv"
                 />
               </div>
               <div>
@@ -121,6 +123,7 @@
                   type="number"
                   class="w-full p-2 bg-gray-800 text-white rounded"
                   placeholder="Attaque"
+                  v-model="newMonster.attaque"
                 />
               </div>
             </div>
@@ -130,12 +133,13 @@
               <textarea
                 class="w-full p-2 bg-gray-800 text-white rounded"
                 placeholder="Description du monstre"
+                v-model="newMonster.description"
               ></textarea>
             </div>
 
             <div>
               <label class="block mb-2">Type de Monstre</label>
-              <select class="w-full p-2 bg-gray-800 text-white rounded">
+              <select class="w-full p-2 bg-gray-800 text-white rounded" v-model="newMonster.type">
                 <option value="aquatique">Aquatique</option>
                 <option value="terrestre">Terrestre</option>
                 <option value="volant">Volant</option>
@@ -146,6 +150,7 @@
 
             <button
               class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              @click.prevent="addOne()"
             >
               Ajouter Monstre
             </button>
@@ -274,29 +279,43 @@
     <script>
       //  1 Initialisation du localStorage
 
-      localStorage.monsters = JSON.stringify([
-        {
-          id: Date.now(),
-          name: "Aqualizzard",
-          type: "aquatique",
-          description: "Lorem Ipsum",
-          pv: "50",
-          attaque: "50",
-        },
-      {
-          id: Date.now() +1,
-          name: "Firelion",
-          type: "terrestre",
-          description: "Lorem Ipsum",
-          pv: "50",
-          attaque: "50",
-        },
-      ]);
+      // localStorage.monsters = JSON.stringify([
+      //   {
+      //     id: Date.now(),
+      //     name: "Aqualizzard",
+      //     type: "aquatique",
+      //     description: "Lorem Ipsum",
+      //     pv: "50",
+      //     attaque: "50",
+      //   },
+      // {
+      //     id: Date.now() +1,
+      //     name: "Firelion",
+      //     type: "terrestre",
+      //     description: "Lorem Ipsum",
+      //     pv: "50",
+      //     attaque: "50",
+      //   },
+      // ]);
       Vue.createApp({
         data() {
           return {
             monsters: JSON.parse(localStorage.getItem("monsters")) || [],
+            newMonster: { id: null, name: "", type: "", description: "",pv: "",attaque: "" },
           };
+        },
+        methods: {
+          addOne() {
+            this.newMonster.id = Date.now();
+            this.monsters.push({ ...this.newMonster });
+            this.newMonster.id = null;
+            this.newMonster.name = "";
+            this.newMonster.type = "";
+            this.newMonster.description = "";
+            this.newMonster.pv = "";
+            this.newMonster.attaque = "";
+            
+          },
         },
         watch: {
           monsters: {
