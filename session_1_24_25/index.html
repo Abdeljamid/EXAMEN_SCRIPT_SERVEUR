@@ -233,10 +233,10 @@
 
           <div
             class="monster-card bg-gray-700 rounded-lg shadow-lg p-6"
-            data-monster-type="{{monster.type}}"
+            :data-monster-type="monster.type"
           >
             <img
-              src="images/aqualizzard.png"
+              :src="'images/' + monster.name + '.png'"
               class="w-full h-40 object-cover rounded mb-4"
             />
             <h3 class="text-xl font-bold">{{monster.name}}</h3>
@@ -274,16 +274,24 @@
     <script>
       //  1 Initialisation du localStorage
 
-      // localStorage.monsters = JSON.stringify([
-      //   {
-      //     id: Date.now(),
-      //     name: "Aqualizzard",
-      //     type: "aquatique",
-      //     description: "Lorem Ipsum",
-      //     pv: "50",
-      //     attaque: "50",
-      //   },
-      // ]);
+      localStorage.monsters = JSON.stringify([
+        {
+          id: Date.now(),
+          name: "Aqualizzard",
+          type: "aquatique",
+          description: "Lorem Ipsum",
+          pv: "50",
+          attaque: "50",
+        },
+      {
+          id: Date.now() +1,
+          name: "Firelion",
+          type: "terrestre",
+          description: "Lorem Ipsum",
+          pv: "50",
+          attaque: "50",
+        },
+      ]);
       Vue.createApp({
         data() {
           return {
