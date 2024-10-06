@@ -243,7 +243,7 @@
           <!-- Carte de monstre --> 
            <ul>
             <li class="p-4 animate__animated" 
-            v-for="monster  in monsters "
+            v-for="monster  in sortedMonsters "
             :key="monster.id"
             :class="{ animate__bounceOut: monster.isDeleted}">
           <div
@@ -314,6 +314,7 @@
           return {
             monsters: JSON.parse(localStorage.getItem("monsters")) || [],
             newMonster: { id: null, name: "", type: "", description: "",pv: "",attaque: "" },
+            
           };
         },
         methods: {
@@ -332,6 +333,7 @@
             const monster = this.monsters.find((monster) => monster.id === id);
             if (monster) {
               this.newMonster = { ...monster };
+
             }
             
           },
@@ -349,8 +351,11 @@
                 pv: "",
                 attaque: "",
               };
+              this.resetForm();
             }
-            
+          },
+          resetForm() {
+            this.newMonster = { id: null, name: "", type: "", description: "", pv: "", attaque: "" };
           },
           deleteOneById(id) {
             const monster = this.monsters.find((item) => item.id == id);
@@ -363,7 +368,13 @@
             }, 1000);
           },
         },
-
+        computed: {
+            sortedMonsters() { // Tri par ordre alphabétique
+              return this.monsters.slice().sort((a, b) => {
+                return a.name.localeCompare(b.name);
+              });
+            },
+          },
         watch: {
           monsters: {
             handler(newValue, oldValue) {
