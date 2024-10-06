@@ -186,6 +186,7 @@
                 type="text"
                 class="w-full p-2 bg-gray-800 text-white rounded"
                 placeholder="Nom du monstre"
+                v-model="searchQuery.name"
               />
             </div>
 
@@ -197,6 +198,7 @@
                   type="number"
                   class="w-full p-2 bg-gray-800 text-white rounded"
                   placeholder="Min PV"
+                  v-model="searchQuery.pvMin"
                 />
               </div>
               <div>
@@ -205,6 +207,7 @@
                   type="number"
                   class="w-full p-2 bg-gray-800 text-white rounded"
                   placeholder="Max PV"
+                  v-model="searchQuery.pvMax"
                 />
               </div>
             </div>
@@ -216,6 +219,7 @@
                   type="number"
                   class="w-full p-2 bg-gray-800 text-white rounded"
                   placeholder="Min Attaque"
+                  v-model="searchQuery.attaqueMin"
                 />
               </div>
               <div>
@@ -224,13 +228,14 @@
                   type="number"
                   class="w-full p-2 bg-gray-800 text-white rounded"
                   placeholder="Max Attaque"
+                  v-model="searchQuery.attaqueMax"
                 />
               </div>
             </div>
 
             <div>
               <label class="block mb-2">Type de Monstre</label>
-              <select class="w-full p-2 bg-gray-800 text-white rounded">
+              <select class="w-full p-2 bg-gray-800 text-white rounded" v-model="searchQuery.type">
                 <option value="">Tous les types</option>
                 <option value="aquatique">Aquatique</option>
                 <option value="terrestre">Terrestre</option>
@@ -239,6 +244,13 @@
                 <option value="spectral">Spectral</option>
               </select>
             </div>
+            <button
+            type="button"
+            class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            @click.prevent="resetFilters()"
+          >
+            Réinitialiser les filtres
+          </button>
           </form>
         </div>
       </aside>
@@ -253,7 +265,7 @@
           <!-- Carte de monstre --> 
            <ul>
             <li class="p-4 animate__animated" 
-            v-for="monster  in sortedMonsters "
+            v-for="monster  in filteredMonsters "
             :key="monster.id"
             :class="{ animate__bounceOut: monster.isDeleted}">
           <div
@@ -325,15 +337,14 @@
             monsters: JSON.parse(localStorage.getItem("monsters")) || [],
             newMonster: { id: null, name: "", type: "", description: "",pv: "",attaque: "" },
             isFiltersTabActive: false, // Propriété pour gérer l'onglet actif
-            // Propriétés pour les filtres
-            searchName: "",
-            filterPVMin: "",
-            filterPVMax: "",
-            filterAttaqueMin: "",
-            filterAttaqueMax: "",
-            filterType: ""
-           
-            
+            searchQuery: {
+              name: "",   
+              type: "",
+              pvMin: "",
+              pvMax: "",
+              attaqueMin: "",
+              attaqueMax: ""
+            }
           };
         },
         methods: {
@@ -376,11 +387,23 @@
           resetForm() {
             this.newMonster = { id: null, name: "", type: "", description: "", pv: "", attaque: "" };
           },
+          resetFilters() {
+            // Réinitialisation des filtres
+            this.searchQuery = {
+              name: "",
+              type: "",
+              pvMin: "",
+              pvMax: "",
+              attaqueMin: "",
+              attaqueMax: ""
+            };
+          },
           toggleTab(tab) {
             if (tab === 'filters') {
               this.isFiltersTabActive = true;
             } else {
               this.isFiltersTabActive = false;
+              this.resetFilters();
             }
           },
           deleteOneById(id) {
@@ -400,7 +423,30 @@
                 return a.name.localeCompare(b.name);
               });
             },
-          },
+          
+          filteredMonsters() {
+            return this.monsters.filter(monster => {
+              // Filtrer par nom
+              const nameMatch = monster.name.toLowerCase().includes(this.searchQuery.name.toLowerCase());
+              
+              // Filtrer par type
+              const typeMatch = monster.type.toLowerCase().includes(this.searchQuery.type.toLowerCase());
+
+              // Filtrer par points de vie (PV)
+              const pvMatch =
+                (!this.searchQuery.pvMin || monster.pv >= this.searchQuery.pvMin) &&
+                (!this.searchQuery.pvMax || monster.pv <= this.searchQuery.pvMax);
+
+              // Filtrer par attaque
+              const attaqueMatch =
+                (!this.searchQuery.attaqueMin || monster.attaque >= this.searchQuery.attaqueMin) &&
+                (!this.searchQuery.attaqueMax || monster.attaque <= this.searchQuery.attaqueMax);
+
+              // Retourner true si tous les critères correspondent
+              return nameMatch && typeMatch && pvMatch && attaqueMatch;
+            });
+          }
+        },
         watch: {
           monsters: {
             handler(newValue, oldValue) {
