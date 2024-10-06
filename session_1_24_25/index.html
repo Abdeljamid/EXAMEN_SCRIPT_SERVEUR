@@ -88,12 +88,22 @@
           </div>
         </header>
         <div class="flex">
-          <button class="tab-button active">Ajouter un Monstre</button>
-          <button class="tab-button">Filtres</button>
+          <button class="tab-button"
+          :class="{ active: !isFiltersTabActive }"
+          @click="toggleTab('add')" 
+          >
+          Ajouter un Monstre
+        </button>
+          <button  class="tab-button"
+          :class="{ active: isFiltersTabActive }"
+          @click="toggleTab('filters')"
+          >
+          Filtres
+        </button>
         </div>
 
         <!-- Contenu des onglets -->
-        <div id="form" class="tab-content active">
+        <div id="add-form" class="tab-content" :class="{ active: !isFiltersTabActive }">
           <h2 class="text-3xl monster-header mb-6">Ajouter un Monstre</h2>
           <form class="grid grid-cols-1 gap-4">
             <div>
@@ -167,7 +177,7 @@
         </div>
 
         <!-- Contenu des filtres -->
-        <div id="filters" class="tab-content">
+        <div id="filters-form" class="tab-content" :class="{ active: isFiltersTabActive }">
           <h2 class="text-3xl monster-header mb-6">Filtres</h2>
           <form class="grid grid-cols-1 gap-4">
             <div>
@@ -314,6 +324,15 @@
           return {
             monsters: JSON.parse(localStorage.getItem("monsters")) || [],
             newMonster: { id: null, name: "", type: "", description: "",pv: "",attaque: "" },
+            isFiltersTabActive: false, // Propriété pour gérer l'onglet actif
+            // Propriétés pour les filtres
+            searchName: "",
+            filterPVMin: "",
+            filterPVMax: "",
+            filterAttaqueMin: "",
+            filterAttaqueMax: "",
+            filterType: ""
+           
             
           };
         },
@@ -356,6 +375,13 @@
           },
           resetForm() {
             this.newMonster = { id: null, name: "", type: "", description: "", pv: "", attaque: "" };
+          },
+          toggleTab(tab) {
+            if (tab === 'filters') {
+              this.isFiltersTabActive = true;
+            } else {
+              this.isFiltersTabActive = false;
+            }
           },
           deleteOneById(id) {
             const monster = this.monsters.find((item) => item.id == id);

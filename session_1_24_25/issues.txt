@@ -57,4 +57,4 @@ Nom de l’issue : Recherche et filtrage des monstres
 Nom du commit : feat: implement search and filter functionality for monsters
 Objectif : Filtrer les monstres affichés en fonction de la recherche par nom ou type.
 Computed : filteredMonsters()
-Détails : Utiliser la propriété searchQuery pour filtrer les monstres dont le nom ou le type contient la chaîne de recherche. SearchQuery devrait être un objet littéral avec une propriété par filtre ayant chacune une valeur par défaut)
+Détails : Utiliser la propriété searchQuery pour filtrer les monstres dont le nom ou le type contient la chaîne de recherche. SearchQuery devrait être un objet littéral avec une propriété par filtre ayant chacune une valeur par défaut
