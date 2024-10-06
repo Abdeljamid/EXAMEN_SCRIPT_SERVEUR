@@ -76,7 +76,7 @@
     <!-- Main Content -->
     <div id="app" class="container mx-auto pt-8 pb-12 flex">
       <!-- Onglets pour formulaire et filtres -->
-      <aside class="w-1/3 bg-gray-700 rounded-lg shadow-lg overflow-hidden">
+      <aside class="w-1/3 m-4 bg-gray-700 rounded-lg shadow-lg overflow-hidden">
         <!-- Header -->
         <header class="bg-gray-900 shadow-lg p-4">
           <div class="">
@@ -147,13 +147,22 @@
                 <option value="spectral">Spectral</option>
               </select>
             </div>
-
+            <!-- si id est null ca met le btn ajouter -->
             <button
-              class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-              @click.prevent="addOne()"
-            >
-              Ajouter Monstre
-            </button>
+            v-if="!newMonster.id" 
+            class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            @click.prevent="addOne()"
+          >
+            Ajouter Monstre
+          </button>
+          <!-- si id est défini met le btn modifier -->
+          <button
+           v-if="newMonster.id"
+            class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            @click.prevent="updateOneById(newMonster.id)"
+          >
+            Modifier Monstre
+        </button>
           </form>
         </div>
 
@@ -254,6 +263,7 @@
             <div class="text-right">
               <button
                 class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-full"
+                @click="editOneById(monster.id)"
               >
                 Modifier
               </button>
@@ -318,6 +328,30 @@
             this.newMonster.attaque = "";
             
           },
+          editOneById(id) {
+            const monster = this.monsters.find((monster) => monster.id === id);
+            if (monster) {
+              this.newMonster = { ...monster };
+            }
+            
+          },
+          updateOneById(id) {
+            const monsterIndex = this.monsters.findIndex(
+              (monster) => monster.id === id
+            );
+            if (monsterIndex !== -1) {
+              this.monsters[monsterIndex] = { ...this.newMonster, id };
+              this.newMonster = {
+                id: Date.now(),
+                name: "",
+                type: "",
+                description: "",
+                pv: "",
+                attaque: "",
+              };
+            }
+            
+          },
           deleteOneById(id) {
             const monster = this.monsters.find((item) => item.id == id);
             monster.isDeleted = true;
@@ -326,7 +360,7 @@
                 this.monsters.findIndex((item) => item.id == id),
                 1
               );
-            }, 600);
+            }, 1000);
           },
         },
 
